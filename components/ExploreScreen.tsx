@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, View, Button, StyleSheet } from "react-native";
 import ExploreSearchBar from "./ExploreSearchBar";
 import MainBooksContainer from "./MainBooksContainer";
 import axios from "axios";
+import { UserContext } from "../contexts/UserContext";
 import { CameraView } from "expo-camera"; // Import CameraView for camera functionality
 import { API_KEY } from "@env";
 
 const ExploreScreen = () => {
   const [books, setBooks] = useState<any[]>([]);
+  const { user } = useContext(UserContext);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -47,7 +49,7 @@ const ExploreScreen = () => {
     };
 
     if (searchQuery) fetchBooks();
-  }, [searchQuery]);
+  }, [searchQuery, user]);
 
   const handleBarcodeScanned = ({
     type,
