@@ -23,21 +23,12 @@ const AppNavigator = () => {
   const iconSize = 36;
   const viewSize = 44;
 
-  // const fadeTransition = ({ current }: { current: any }) => ({
-  //   cardStyle: {
-  //     opacity: current.progress,
-  //   },
-  // });
+
 
   return (
     <BottomTab.Navigator
       screenOptions={{
         header: () => <AppHeader />,
-        // cardStyleInterpolator: fadeTransition, // Custom fade transition
-        // transitionSpec: {
-        //   open: TransitionSpecs.FadeInFromBottomAndroidSpec,
-        //   close: TransitionSpecs.FadeOutToBottomAndroidSpec,
-        // },
       }}
       // screenOptions={{
       //   header: () => <AppHeader />,
