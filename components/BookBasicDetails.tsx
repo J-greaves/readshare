@@ -7,7 +7,7 @@ const cardWidth = width / 3 - 10;
 const cardHeight = cardWidth * 1.5;
 
 const BookBasicDetails = ({ book }: { book: Book }) => {
-  const authorsString = book.authors.join(", ");
+  const authorsString = book.authors?.join(", ") ?? "";
 
   return (
     <View style={styles.outerFrame}>

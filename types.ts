@@ -20,6 +20,7 @@ export interface Book {
   rating?: number;
   // Fields present on borrowing/lending responses
   borrower?: string;
+  requests?: Record<string, unknown>;
 }
 
 export interface User {

@@ -29,7 +29,7 @@ const BookShelf = ({ books, page }: BookShelfProps) => {
                 <BookCard isLoaded={true} book={book} page={page} />
                 {page === "request" ? (
                   <Text style={styles.comment}>
-                    {Object.keys(book.requests).join(" & ")} wants to borrow
+                    {Object.keys(book.requests ?? {}).join(" & ")} wants to borrow
                     this!
                   </Text>
                 ) : null}
