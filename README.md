@@ -92,7 +92,7 @@ cp .env.example .env
 npx expo start
 ```
 
-Scan the QR code with Expo Go (iOS or Android) to run on a physical device, or press `i` / `a` to open in a simulator.
+Scan the QR code with Expo Go (iOS or Android - requires SDK51 version) to run on a physical device, or press `i` / `a` to open in a simulator.
 
 ---
 
