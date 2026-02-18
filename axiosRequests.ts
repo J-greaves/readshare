@@ -1,219 +1,136 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { Book, Friend, User } from "./types";
 
-const getLibrary = (username: string) => {
-  return axios
-    .get(`https://hosting-api-yiyu.onrender.com/api/users/${username}/books`)
-    .then((books: any) => {
-      return books;
-    });
+const BASE_URL = "https://hosting-api-yiyu.onrender.com/api";
+
+const getLibrary = (username: string): Promise<AxiosResponse<Book[]>> => {
+  return axios.get<Book[]>(`${BASE_URL}/users/${username}/books`);
 };
 
-const getWishlist = (username: string) => {
-  return axios
-    .get(`https://hosting-api-yiyu.onrender.com/api/users/${username}/wishlist`)
-    .then((books: any) => {
-      return books;
-    });
+const getWishlist = (username: string): Promise<AxiosResponse<Book[]>> => {
+  return axios.get<Book[]>(`${BASE_URL}/users/${username}/wishlist`);
 };
 
-const postLibrary = (username: string, data: any) => {
-  return axios
-    .post(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/books`,
-      data
-    )
-    .then((book: any) => {
-      return book;
-    });
+const postLibrary = (username: string, data: Book): Promise<AxiosResponse<Book>> => {
+  return axios.post<Book>(`${BASE_URL}/users/${username}/books`, data);
 };
 
-const postWishlist = (username: string, data: any) => {
-  return axios
-    .post(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/wishlist`,
-      data
-    )
-    .then((book: any) => {
-      return book;
-    });
+const postWishlist = (username: string, data: Book): Promise<AxiosResponse<Book>> => {
+  return axios.post<Book>(`${BASE_URL}/users/${username}/wishlist`, data);
 };
 
-const getLibraryBook = (username: string, bookId: string) => {
-  return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/books/${bookId}`
-    )
-    .then((book: any) => {
-      return book;
-    });
-};
-const getWishlistBook = (username: string, bookId: string) => {
-  return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/wishlist/${bookId}`
-    )
-    .then((book: any) => {
-      return book;
-    });
+const getLibraryBook = (username: string, bookId: string): Promise<AxiosResponse<Book>> => {
+  return axios.get<Book>(`${BASE_URL}/users/${username}/books/${bookId}`);
 };
 
-const deleteLibraryBook = (username: string, bookId: string) => {
-  return axios.delete(
-    `https://hosting-api-yiyu.onrender.com/api/users/${username}/books/${bookId}`
-  );
+const getWishlistBook = (username: string, bookId: string): Promise<AxiosResponse<Book>> => {
+  return axios.get<Book>(`${BASE_URL}/users/${username}/wishlist/${bookId}`);
 };
 
-const deleteWishlistBook = (username: string, bookId: string) => {
-  return axios.delete(
-    `https://hosting-api-yiyu.onrender.com/api/users/${username}/wishlist/${bookId}`
-  );
+const deleteLibraryBook = (username: string, bookId: string): Promise<AxiosResponse> => {
+  return axios.delete(`${BASE_URL}/users/${username}/books/${bookId}`);
 };
 
-const postFriendRequest = (username: string, data: any) => {
-  return axios
-    .post(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/friendrequests`,
-      data
-    )
-    .then((request) => {
-      return request;
-    });
+const deleteWishlistBook = (username: string, bookId: string): Promise<AxiosResponse> => {
+  return axios.delete(`${BASE_URL}/users/${username}/wishlist/${bookId}`);
 };
 
-const getFriendRequests = (username: string) => {
-  return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/friendrequests`
-    )
-    .then((requests) => {
-      return requests;
-    });
+const postFriendRequest = (username: string, data: { username: string }): Promise<AxiosResponse> => {
+  return axios.post(`${BASE_URL}/users/${username}/friendrequests`, data);
 };
 
-const getFriends = (username: string) => {
-  return axios
-    .get(`https://hosting-api-yiyu.onrender.com/api/users/${username}/friends`)
-    .then((friends) => {
-      return friends;
-    });
+const getFriendRequests = (username: string): Promise<AxiosResponse<Friend[]>> => {
+  return axios.get<Friend[]>(`${BASE_URL}/users/${username}/friendrequests`);
 };
 
-const acceptFriendRequest = (username: string, data: any) => {
-  return axios
-    .post(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/acceptfriend`,
-      data
-    )
-    .then((friends) => {
-      return friends;
-    });
+const getFriends = (username: string): Promise<AxiosResponse<Friend[]>> => {
+  return axios.get<Friend[]>(`${BASE_URL}/users/${username}/friends`);
 };
 
-function deleteFriendRequest(username: string, toReject: string) {
-  return axios.delete(
-    `https://hosting-api-yiyu.onrender.com/api/users/${username}/friendrequests/${toReject}`
-  );
-}
+const acceptFriendRequest = (username: string, data: { username: string }): Promise<AxiosResponse> => {
+  return axios.post(`${BASE_URL}/users/${username}/acceptfriend`, data);
+};
 
-function getUser(username: string) {
+const deleteFriendRequest = (username: string, toReject: string): Promise<AxiosResponse> => {
+  return axios.delete(`${BASE_URL}/users/${username}/friendrequests/${toReject}`);
+};
+
+const getUser = (username: string): Promise<AxiosResponse<User>> => {
+  return axios.get<User>(`${BASE_URL}/users/${username}`);
+};
+
+const deleteFriend = (username: string, toDelete: string): Promise<AxiosResponse> => {
+  return axios.delete(`${BASE_URL}/users/${username}/friends/${toDelete}`);
+};
+
+const getLendableFriends = (username: string): Promise<AxiosResponse<Book[]>> => {
+  return axios.get<Book[]>(`${BASE_URL}/users/${username}/books?lendable=true`);
+};
+
+const getBorrowingList = (username: string): Promise<Book[]> => {
   return axios
-    .get(`https://hosting-api-yiyu.onrender.com/api/users/${username}`)
-    .then((users) => {
-      return users;
-    });
-}
+    .get<Book[]>(`${BASE_URL}/users/${username}/borrowing`)
+    .then((response) => response.data);
+};
 
-function deleteFriend(username: string, toDelete: string) {
+const getLendingList = (username: string): Promise<Book[]> => {
   return axios
-    .delete(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/friends/${toDelete}`
-    )
-    .then((users) => {
-      return users;
-    });
-}
+    .get<Book[]>(`${BASE_URL}/users/${username}/lending`)
+    .then((response) => response.data);
+};
 
-function getLendableFriends(username: string) {
-  return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/books?lendable=true`
-    )
-    .then((books) => {
-      return books;
-    });
-}
-
-function getBorrowingList(username: string) {
-  return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/borrowing`
-    )
-    .then((books) => {
-      return books.data;
-    });
-}
-
-function getLendingList(username: string) {
-  return axios
-    .get(`https://hosting-api-yiyu.onrender.com/api/users/${username}/lending`)
-    .then((books) => {
-      return books.data;
-    });
-}
-
-function postBookBorrowRequest(
+const postBookBorrowRequest = (
   borrowerUsername: string,
   bookId: string,
   ownerUsername: string
-) {
+): Promise<AxiosResponse> => {
   return axios.post(
-    `https://hosting-api-yiyu.onrender.com/api/users/${borrowerUsername}/books/${bookId}/requestlend/${ownerUsername}`
+    `${BASE_URL}/users/${borrowerUsername}/books/${bookId}/requestlend/${ownerUsername}`
   );
-}
+};
 
-function deleteBookBorrowRequest(borrowerUsername: string, bookId: string) {
+const deleteBookBorrowRequest = (
+  borrowerUsername: string,
+  bookId: string
+): Promise<AxiosResponse> => {
   return axios.delete(
-    `https://hosting-api-yiyu.onrender.com/api/users/${borrowerUsername}/borrowrequest/${bookId}`
+    `${BASE_URL}/users/${borrowerUsername}/borrowrequest/${bookId}`
   );
-}
+};
 
-function acceptBookBorrowRequest(
+const acceptBookBorrowRequest = (
   ownerUsername: string,
   bookId: string,
   borrowerUsername: string
-) {
+): Promise<AxiosResponse> => {
   return axios.post(
-    `https://hosting-api-yiyu.onrender.com/api/users/${ownerUsername}/books/${bookId}/acceptrequest/${borrowerUsername}`
+    `${BASE_URL}/users/${ownerUsername}/books/${bookId}/acceptrequest/${borrowerUsername}`
   );
-}
+};
 
-function returnBookAfterBorrow(
+const returnBookAfterBorrow = (
   borrowerUsername: string,
   ownerUsername: string,
   bookId: string
-) {
+): Promise<AxiosResponse> => {
   return axios.delete(
-    `https://hosting-api-yiyu.onrender.com/api/users/${borrowerUsername}/returnbook/${ownerUsername}/${bookId}`
+    `${BASE_URL}/users/${borrowerUsername}/returnbook/${ownerUsername}/${bookId}`
   );
-}
-function getBorrowRequests(username: string, bookId: string) {
+};
+
+const getBorrowRequests = (username: string, bookId: string): Promise<AxiosResponse> => {
+  return axios.get(`${BASE_URL}/users/${username}/books/${bookId}/requestlist`);
+};
+
+const getAllBorrowRequests = (username: string): Promise<Book[]> => {
   return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/books/${bookId}/requestlist`
-    )
-    .then((books) => {
-      return books;
-    });
-}
-function getAllBorrowRequests(username: string) {
-  return axios
-    .get(
-      `https://hosting-api-yiyu.onrender.com/api/users/${username}/requestborrow`
-    )
-    .then((books) => {
-      return books.data;
-    });
-}
+    .get<Book[]>(`${BASE_URL}/users/${username}/requestborrow`)
+    .then((response) => response.data);
+};
+
+const postNewUser = (data: User): Promise<AxiosResponse<User>> => {
+  return axios.post<User>(`${BASE_URL}/users/newuser`, data);
+};
 
 const functions = {
   getLibrary,
@@ -240,6 +157,7 @@ const functions = {
   returnBookAfterBorrow,
   getBorrowRequests,
   getAllBorrowRequests,
+  postNewUser,
 };
 
 export default functions;

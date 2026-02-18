@@ -1,38 +1,35 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
+import { Text, StyleSheet } from "react-native";
 import MainBooksContainer from "./MainBooksContainer";
 import FloatingAddButton from "./FloatingAddButton";
 import { UserContext } from "../contexts/UserContext";
 import { BookAddContext } from "../contexts/BookAddContext";
-import axios from "axios";
+import { useFetchLibrary } from "../hooks/useFetchLibrary";
 
 const LibraryScreen = () => {
-  const [books, setBooks] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
   const { user } = useContext(UserContext);
   const { addBook } = useContext(BookAddContext);
+  const { books, isLoaded, error } = useFetchLibrary(user.username, addBook);
 
-  useEffect(() => {
-    axios
-      .get(
-        `https://hosting-api-yiyu.onrender.com/api/users/${user.username}/books`
-      )
-      .then((response: any) => {
-        setBooks(response.data);
-        setIsLoaded(true);
-      })
-      .catch((err: any) => {
-        setIsLoaded(true);
-        setError("Failed to fetch books");
-        console.log("error occured fetching library", err);
-      });
-  }, [user, addBook]);
   return (
     <>
-      <MainBooksContainer page={"library"} books={books} isLoaded={true} />
+      {error && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
+      <MainBooksContainer page={"library"} books={books} isLoaded={isLoaded} />
       <FloatingAddButton />
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  error: {
+    color: "red",
+    textAlign: "center",
+    padding: 10,
+  },
+});
 
 export default LibraryScreen;

@@ -11,13 +11,21 @@ import { useNavigation } from "@react-navigation/native";
 import functions from "../axiosRequests";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
+import { Friend } from "../types";
 
-const FriendCard = ({ friend, page, updated, setUpdated }: any) => {
+interface FriendCardProps {
+  friend: Friend;
+  page: "friend" | "friendRequest" | "searchBar";
+  updated?: number;
+  setUpdated?: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const FriendCard = ({ friend, page, updated, setUpdated }: FriendCardProps) => {
   const { user } = useContext(UserContext);
   const [isFriend, setIsFriend] = useState(false);
   const [isOutgoingFriendRequest, setIsOutgoingFriendRequest] = useState(false);
   const [isIncomingFriendRequest, setIsIncomingFriendRequest] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [removedFromList, setRemovedFromList] = useState(false);
 
   const navigation = useNavigation();
@@ -35,15 +43,25 @@ const FriendCard = ({ friend, page, updated, setUpdated }: any) => {
   }, [page]);
 
   const handleSendFriendRequest = () => {
-    functions.postFriendRequest(friend.username, user).then(() => {
-      setIsOutgoingFriendRequest(true);
-    });
+    functions
+      .postFriendRequest(friend.username, user)
+      .then(() => {
+        setIsOutgoingFriendRequest(true);
+      })
+      .catch(() => {
+        setError("Failed to send friend request. Please try again.");
+      });
   };
 
   const handleRevokeFriendRequest = () => {
-    functions.deleteFriendRequest(friend.username, user.username).then(() => {
-      setIsOutgoingFriendRequest(false);
-    });
+    functions
+      .deleteFriendRequest(friend.username, user.username)
+      .then(() => {
+        setIsOutgoingFriendRequest(false);
+      })
+      .catch(() => {
+        setError("Failed to revoke friend request. Please try again.");
+      });
   };
 
   const handleAcceptFriendRequest = () => {
@@ -53,12 +71,10 @@ const FriendCard = ({ friend, page, updated, setUpdated }: any) => {
       .then(() => {
         setIsFriend(true);
         setIsIncomingFriendRequest(false);
-        setUpdated(2);
-        console.log(updated);
+        setUpdated?.(2);
       })
-      .catch((err) => {
-        setError(err);
-        console.log("Error accepting friend request", err);
+      .catch(() => {
+        setError("Failed to accept friend request. Please try again.");
         setRemovedFromList(false);
       });
   };
@@ -69,11 +85,9 @@ const FriendCard = ({ friend, page, updated, setUpdated }: any) => {
       .deleteFriendRequest(user.username, friend.username)
       .then(() => {
         setIsIncomingFriendRequest(false);
-        //setUpdated(2);
       })
-      .catch((err) => {
-        setError(err);
-        console.log("Error declining friend request ", err);
+      .catch(() => {
+        setError("Failed to decline friend request. Please try again.");
         setRemovedFromList(false);
       });
   };
@@ -84,72 +98,74 @@ const FriendCard = ({ friend, page, updated, setUpdated }: any) => {
       .deleteFriend(user.username, friend.username)
       .then(() => {
         setIsFriend(false);
-        //setUpdated(3);
         setRemovedFromList(true);
       })
-      .catch((err: any) => {
-        setError(err);
-        console.log("Error deleting friend:", err);
+      .catch(() => {
+        setError("Failed to remove friend. Please try again.");
         setRemovedFromList(false);
       });
   };
+
   if (removedFromList) {
     return <></>;
   }
+
   return (
     <Pressable
       onPress={
         isFriend ? () => navigation.navigate("Friend page", { friend }) : null
       }
     >
-      {/* <View>
-       {error && <Text style={[styles.text]}>Error. Ups something went wrong</Text>}
-       </View> */}
-      <View style={[styles.card]}>
+      <View style={styles.card}>
+        {error && (
+          <Text accessibilityRole="alert" style={styles.text}>
+            {error}
+          </Text>
+        )}
         <View>
-          <Text style={[styles.name]}>{friend.username}</Text>
+          <Text style={styles.name}>{friend.username}</Text>
           <Text> {friend.name} </Text>
         </View>
         {isFriend ? (
-          <View style={[styles.buttonContainer]}>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button]}
+              style={styles.button}
               onPress={handleDeleteFriend}
             >
               <Image
                 source={require("../assets/person-remove.png")}
-                style={[styles.icon]}
+                style={styles.icon}
               />
             </TouchableOpacity>
           </View>
         ) : null}
 
         {!isFriend && !isOutgoingFriendRequest && !isIncomingFriendRequest ? (
-          <View style={[styles.buttonContainer]}>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button]}
+              style={styles.button}
               onPress={handleSendFriendRequest}
             >
               <Image
                 source={require("../assets/person-add.png")}
-                style={[styles.icon]}
+                style={styles.icon}
               />
             </TouchableOpacity>
           </View>
         ) : null}
 
         {!isFriend && isOutgoingFriendRequest ? (
-          <View style={[styles.buttonContainer]}>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button]}
+              style={styles.button}
               onPress={handleRevokeFriendRequest}
             >
               <Image
                 source={require("../assets/person-remove.png")}
-                style={[styles.icon]}
+                style={styles.icon}
               />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button]}>
+            <TouchableOpacity style={styles.button}>
               <Image
                 source={require("../assets/person-add.png")}
                 style={[styles.icon, { opacity: 0.5 }]}
@@ -159,23 +175,23 @@ const FriendCard = ({ friend, page, updated, setUpdated }: any) => {
         ) : null}
 
         {!isFriend && isIncomingFriendRequest ? (
-          <View style={[styles.buttonContainer]}>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button]}
+              style={styles.button}
               onPress={handleDeclineFriendRequest}
             >
               <Image
                 source={require("../assets/person-remove.png")}
-                style={[styles.icon]}
+                style={styles.icon}
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button]}
+              style={styles.button}
               onPress={handleAcceptFriendRequest}
             >
               <Image
                 source={require("../assets/person-add.png")}
-                style={[styles.icon]}
+                style={styles.icon}
               />
             </TouchableOpacity>
           </View>
@@ -210,7 +226,6 @@ const styles = StyleSheet.create({
   button: {
     padding: 8,
     marginLeft: 10,
-
     borderRadius: 8,
   },
 
@@ -222,6 +237,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
   },
+
   text: {
     fontSize: 15,
     textAlign: "center",

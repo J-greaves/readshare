@@ -1,5 +1,4 @@
-
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import FriendSearchBar from "./FriendSearchBar";
 import FriendRequests from "./FriendRequests";
@@ -9,11 +8,10 @@ const FriendListScreen = () => {
   const [updated, setUpdated] = useState<number>(0);
   return (
     <View>
-      <FriendSearchBar/>
+      <FriendSearchBar />
       <View>
-        
-        <FriendRequests updated={updated} setUpdated={setUpdated}/>
-        <FriendList updated={updated} setUpdated={setUpdated}/>
+        <FriendRequests updated={updated} setUpdated={setUpdated} />
+        <FriendList updated={updated} setUpdated={setUpdated} />
       </View>
     </View>
   );

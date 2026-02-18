@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SearchBar } from "@rneui/themed";
+import { formatSearchQuery } from "../utils/formatSearchQuery";
 
 
-const ExploreSearchBar = ({searchQuery, setSearchQuery} : any) => {
+interface ExploreSearchBarProps {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+}
+
+const ExploreSearchBar = ({ searchQuery, setSearchQuery }: ExploreSearchBarProps) => {
     const [searchBarValue, setSearchBarValue] = useState("");
     
     const handleSubmit = () => {
-        let trimmedSearchQuery = searchBarValue.trim().replaceAll(" ","+").toLowerCase()
-        setSearchQuery(trimmedSearchQuery)
-}
+        setSearchQuery(formatSearchQuery(searchBarValue));
+    };
 
     return (
         <View>

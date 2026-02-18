@@ -1,28 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { FlatList, StyleSheet, View, Text } from "react-native";
 import FriendCard from "./FriendCard";
-import functions from "../axiosRequests";
-import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { isEnabled } from "react-native/Libraries/Performance/Systrace";
+import { useFetchFriendRequests } from "../hooks/useFetchFriendRequests";
 
-const FriendRequests = ({ updated, setUpdated }: any) => {
+interface FriendRequestsProps {
+  updated: number;
+  setUpdated: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const FriendRequests = ({ updated, setUpdated }: FriendRequestsProps) => {
   const { user } = useContext(UserContext);
-  const [friendRequests, setFriendRequests] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-    functions.getFriendRequests(user.username).then((request: any) => {
-      setFriendRequests(request.data);
-      setIsLoading(false);
-    });
-  }, [updated, user]);
+  const { friendRequests, isLoading, error } = useFetchFriendRequests(
+    user.username,
+    updated
+  );
 
   if (isLoading) {
     return (
       <View>
-        <Text style={styles.loading}>...Loading friend request</Text>
+        <Text style={styles.loading}>Loading friend requests...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View>
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
       </View>
     );
   }
@@ -37,9 +44,9 @@ const FriendRequests = ({ updated, setUpdated }: any) => {
       )}
       <FlatList
         data={friendRequests}
-        renderItem={({ item, index }) => (
+        keyExtractor={(item) => item.username}
+        renderItem={({ item }) => (
           <FriendCard
-            key={index}
             friend={item}
             page={"friendRequest"}
             updated={updated}
@@ -53,9 +60,6 @@ const FriendRequests = ({ updated, setUpdated }: any) => {
 };
 
 const styles = StyleSheet.create({
-  searchBar: {
-    color: "black",
-  },
   title: {
     textAlign: "left",
     color: "black",
@@ -74,6 +78,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "gray",
     textAlign: "center",
+  },
+  error: {
+    fontSize: 15,
+    color: "red",
+    textAlign: "center",
+    margin: 9,
   },
 });
 

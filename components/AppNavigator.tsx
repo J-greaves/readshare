@@ -14,8 +14,6 @@ import MyBookProgress from "./MyBookProgress";
 import FriendScreen from "./FriendScreen";
 import RegisterNewUser from "./RegisterNewUser";
 import LendingScreen from "./LendingScreen";
-//import { TransitionSpecs, CardStyleInterpolators } from '@react-navigation/stack';
-
 
 const BottomTab = createBottomTabNavigator();
 
@@ -23,19 +21,11 @@ const AppNavigator = () => {
   const iconSize = 36;
   const viewSize = 44;
 
-
-
   return (
     <BottomTab.Navigator
       screenOptions={{
         header: () => <AppHeader />,
       }}
-      // screenOptions={{
-      //   header: () => <AppHeader />,
-      //   // when true, BottomTab.Screens that become invisible get unmounted
-      //   // https://reactnavigation.org/docs/bottom-tab-navigator/#unmountonblur
-      //   unmountOnBlur: true,
-      // }}
     >
       <BottomTab.Screen
         name="Home"

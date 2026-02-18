@@ -5,7 +5,7 @@ import MainBooksContainer from "./MainBooksContainer";
 import axios from "axios";
 import { UserContext } from "../contexts/UserContext";
 import { CameraView } from "expo-camera"; // Import CameraView for camera functionality
-import { API_KEY } from "@env";
+import { GOOGLE_BOOKS_API_KEY } from "@env";
 
 const ExploreScreen = () => {
   const [books, setBooks] = useState<any[]>([]);
@@ -22,7 +22,7 @@ const ExploreScreen = () => {
       try {
         setIsLoaded(false);
         const response = await axios.get(
-          `https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&key=AIzaSyCrAKfdwMbSAbNyZ9_TLTlj-H7Q-n9Ixrc&maxResults=40`
+          `https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&key=${GOOGLE_BOOKS_API_KEY}&maxResults=40`
         );
         const mappedBooks = response.data.items
           .filter((item: any) => item.volumeInfo)

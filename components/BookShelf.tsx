@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import { ScrollView, Text, StyleSheet, View, Dimensions } from "react-native";
 import BookCard from "./BookCard";
+import { Book, PageContext } from "../types";
 
 type BookShelfProps = {
   books: Book[];
-  page: string;
+  page: PageContext;
 };
 
 const BookShelf = ({ books, page }: BookShelfProps) => {

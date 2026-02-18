@@ -1,11 +1,12 @@
 import React from "react";
 import { Text, View, Image, StyleSheet, Dimensions } from "react-native";
+import { Book } from "../types";
 
 const { width } = Dimensions.get("window");
 const cardWidth = width / 3 - 10;
 const cardHeight = cardWidth * 1.5;
 
-const BookBasicDetails = ({ book }: any) => {
+const BookBasicDetails = ({ book }: { book: Book }) => {
   const authorsString = book.authors.join(", ");
 
   return (

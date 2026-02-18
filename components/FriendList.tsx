@@ -1,42 +1,49 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { FlatList, StyleSheet, View, Text } from "react-native";
 import FriendCard from "./FriendCard";
-import functions from "../axiosRequests";
-import { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
+import { useFetchFriends } from "../hooks/useFetchFriends";
 
-const FriendList = ({ updated, setUpdated }: any) => {
+interface FriendListProps {
+  updated: number;
+  setUpdated: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const FriendList = ({ updated, setUpdated }: FriendListProps) => {
   const { user } = useContext(UserContext);
-  const [friends, setFriends] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { friends, isLoading, error } = useFetchFriends(user.username, updated);
 
-  useEffect(() => {
-    setIsLoading(true);
-    functions.getFriends(user.username).then((request: any) => {
-      setFriends(request.data);
-      setIsLoading(false);
-    });
-  }, [updated, user]);
   if (isLoading) {
     return (
       <View>
-        <Text style={styles.loading}>...Loading friends</Text>
+        <Text style={styles.loading}>Loading friends...</Text>
       </View>
     );
   }
+
+  if (error) {
+    return (
+      <View>
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ width: "100%", height: "100%" }}>
       <Text style={styles.title}>Your Friends</Text>
-      {friends.length === 0 && <Text style={styles.text}>No friends</Text>}
+      {friends.length === 0 && <Text style={styles.text}>No friends yet</Text>}
       <FlatList
         data={friends}
-        renderItem={({ item, index }) => (
+        keyExtractor={(item) => item.username}
+        renderItem={({ item }) => (
           <FriendCard
-            key={index}
             friend={item}
             page={"friend"}
             updated={updated}
-            setUpdated={updated}
+            setUpdated={setUpdated}
           />
         )}
         numColumns={1}
@@ -46,9 +53,6 @@ const FriendList = ({ updated, setUpdated }: any) => {
 };
 
 const styles = StyleSheet.create({
-  searchBar: {
-    color: "black",
-  },
   title: {
     fontSize: 16,
     textAlign: "left",
@@ -65,6 +69,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "grey",
     textAlign: "center",
+  },
+  error: {
+    fontSize: 15,
+    color: "red",
+    textAlign: "center",
+    margin: 9,
   },
 });
 

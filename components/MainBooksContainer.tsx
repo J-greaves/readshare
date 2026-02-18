@@ -22,7 +22,7 @@ const MainBooksContainer = ({
     <View style={{ flex: 1, justifyContent: "center" }}>
       <FlatList
         data={isLoaded ? books : Array(24).fill({})}
-        keyExtractor={(item) => item.bookId.toString()}
+        keyExtractor={(item, index) => item.bookId?.toString() ?? index.toString()}
         renderItem={({ item }) => (
           <BookCard
             isLoaded={isLoaded}

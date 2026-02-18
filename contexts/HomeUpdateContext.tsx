@@ -1,9 +1,19 @@
 import React, { createContext, useState } from "react";
 
-export const HomeUpdateContext = createContext();
+interface HomeUpdateContextValue {
+  homeUpdate: Date | undefined;
+  setHomeUpdate: (date: Date) => void;
+}
 
-export const HomeUpdateProvider = ({ children }: any) => {
-  const [homeUpdate, setHomeUpdate] = useState();
+const defaultContext: HomeUpdateContextValue = {
+  homeUpdate: undefined,
+  setHomeUpdate: () => {},
+};
+
+export const HomeUpdateContext = createContext<HomeUpdateContextValue>(defaultContext);
+
+export const HomeUpdateProvider = ({ children }: { children: React.ReactNode }) => {
+  const [homeUpdate, setHomeUpdate] = useState<Date | undefined>(undefined);
 
   return (
     <HomeUpdateContext.Provider value={{ homeUpdate, setHomeUpdate }}>

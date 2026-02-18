@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import StatBlock from "./StatBlock";
 import { UserContext } from "../contexts/UserContext";
 import BookShelf from "./BookShelf";
-import functions from "../axiosRequests";
 import { ScrollView } from "react-native";
 import { HomeUpdateContext } from "../contexts/HomeUpdateContext";
+import { useFetchHomeData } from "../hooks/useFetchHomeData";
 
 const HomeScreen = () => {
   const { user } = useContext(UserContext);
   const { homeUpdate } = useContext(HomeUpdateContext);
-  const [booksBorrorwing, setBooksBorrowing] = useState([]);
-  const [booksLending, setBooksLending] = useState([]);
-  const [lendingRequests, setLendingRequests] = useState([]);
+  const { booksBorrowing, booksLending, lendingRequests, error } =
+    useFetchHomeData(user.username, homeUpdate);
+
   const currentHour = new Date().getHours();
   let greeting = "";
 
@@ -24,29 +24,16 @@ const HomeScreen = () => {
     greeting = `Good evening, ${user.name}!`;
   }
 
-  useEffect(() => {
-    functions.getBorrowingList(user.username).then((response) => {
-      setBooksBorrowing(response);
-    });
-  }, [user, homeUpdate]);
-
-  useEffect(() => {
-    functions.getLendingList(user.username).then((response) => {
-      setBooksLending(response);
-    });
-  }, [user, homeUpdate]);
-
-  useEffect(() => {
-    functions.getAllBorrowRequests(user.username).then((response) => {
-      setLendingRequests(response);
-    });
-  }, [user, homeUpdate]);
-
   return (
     <ScrollView style={styles.page}>
       <View style={styles.container}>
         <Text style={styles.greeting}>{greeting}</Text>
       </View>
+      {error && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
       <StatBlock friend={user} />
       {lendingRequests.length > 0 ? (
         <>
@@ -55,7 +42,7 @@ const HomeScreen = () => {
         </>
       ) : null}
       <Text>Books you're borrowing:</Text>
-      <BookShelf books={booksBorrorwing} page={"borrowing"} />
+      <BookShelf books={booksBorrowing} page={"borrowing"} />
       <Text>Books you're lending:</Text>
       <BookShelf books={booksLending} page={"lending"} />
     </ScrollView>
@@ -76,6 +63,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "darkslategray",
+  },
+  error: {
+    color: "red",
+    textAlign: "center",
+    padding: 10,
   },
 });
 

@@ -10,16 +10,13 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { Book, PageContext } from "../types";
+
 type BookCardProps = {
   isLoaded: boolean;
-  book: {
-    title: string;
-    authors?: any[];
-    description?: string;
-    thumbnail: string;
-  };
-  page: string;
-  ownerUsername: string;
+  book: Book;
+  page: PageContext;
+  ownerUsername?: string;
 };
 
 let booksPerRow = 4;

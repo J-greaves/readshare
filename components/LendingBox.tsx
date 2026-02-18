@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 
 import { ThemedButton } from "react-native-really-awesome-button";
 
@@ -7,12 +7,19 @@ import functions from "../axiosRequests";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../contexts/UserContext";
 import { HomeUpdateContext } from "../contexts/HomeUpdateContext";
+import { Book } from "../types";
 
+interface LendingBoxProps {
+  book: Book;
+  borrower: string;
+  lent: boolean;
+}
 
-const LendingBox = ({ book, borrower, lent }) => {
+const LendingBox = ({ book, borrower, lent }: LendingBoxProps) => {
   const { user } = useContext(UserContext);
   const { setHomeUpdate } = useContext(HomeUpdateContext);
   const [currentlyBorrowing, setCurrentlyBorrowing] = useState(lent);
+  const [error, setError] = useState<string | null>(null);
   const date = "3 months";
   const navigation = useNavigation();
 
@@ -23,14 +30,22 @@ const LendingBox = ({ book, borrower, lent }) => {
         setCurrentlyBorrowing(true);
         setHomeUpdate(new Date());
         navigation.navigate("Home");
+      })
+      .catch(() => {
+        setError("Failed to confirm request. Please try again.");
       });
   };
 
   const handleRejectBorrowRequest = () => {
-    functions.deleteBookBorrowRequest(user.username, book.bookId).then(() => {
-      setHomeUpdate(new Date());
-      navigation.navigate("Home");
-    });
+    functions
+      .deleteBookBorrowRequest(user.username, book.bookId)
+      .then(() => {
+        setHomeUpdate(new Date());
+        navigation.navigate("Home");
+      })
+      .catch(() => {
+        setError("Failed to delete request. Please try again.");
+      });
   };
 
   const handleReturnBookAfterBorrow = () => {
@@ -39,11 +54,19 @@ const LendingBox = ({ book, borrower, lent }) => {
       .then(() => {
         setHomeUpdate(new Date());
         navigation.navigate("Home");
+      })
+      .catch(() => {
+        setError("Failed to mark book as returned. Please try again.");
       });
   };
 
   return (
     <View style={styles.requestToLendContainer}>
+      {error && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
       <Text>
         {borrower} {currentlyBorrowing ? "is borrowing" : "wants to borrow"}{" "}
         this book!
@@ -128,11 +151,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  pressableText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-
   requestToLendContainer: {
     flexDirection: "column",
     justifyContent: "space-between",
@@ -142,6 +160,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "white",
     gap: 10,
+  },
+
+  error: {
+    color: "red",
+    fontSize: 14,
+    textAlign: "center",
   },
 });
 

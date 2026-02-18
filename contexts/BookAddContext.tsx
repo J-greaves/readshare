@@ -1,9 +1,20 @@
 import React, { createContext, useState } from "react";
+import { Book } from "../types";
 
-export const BookAddContext = createContext();
+interface BookAddContextValue {
+  addBook: Book | null;
+  setAddBook: (book: Book | null) => void;
+}
 
-export const BookAddProvider = ({ children }) => {
-  const [addBook, setAddBook] = useState([]);
+const defaultContext: BookAddContextValue = {
+  addBook: null,
+  setAddBook: () => {},
+};
+
+export const BookAddContext = createContext<BookAddContextValue>(defaultContext);
+
+export const BookAddProvider = ({ children }: { children: React.ReactNode }) => {
+  const [addBook, setAddBook] = useState<Book | null>(null);
 
   return (
     <BookAddContext.Provider value={{ addBook, setAddBook }}>

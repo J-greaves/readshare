@@ -1,18 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Pressable, Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import BookBasicDetails from "./BookBasicDetails";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
 import { UserContext } from "../contexts/UserContext";
 import { BookAddContext } from "../contexts/BookAddContext";
 import functions from "../axiosRequests";
 import { ThemedButton } from "react-native-really-awesome-button";
 
-const AddBookScreen = ({ route }: any) => {
+const AddBookScreen = ({ route }: { route: { params: { book: any; ownerUsername: string } } }) => {
   const { book, ownerUsername } = route.params;
 
   const { user } = useContext(UserContext);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [isRequested, setIsRequested] = useState(false);
 
@@ -34,46 +33,47 @@ const AddBookScreen = ({ route }: any) => {
     book.review = "";
     book.rating = 0;
 
-    axios
-      .post(
-        `https://hosting-api-yiyu.onrender.com/api/users/${user.username}/books`,
-        book
-      )
-      .then((response: any) => {
+    functions
+      .postLibrary(user.username, book)
+      .then(() => {
         navigation.navigate("My book details", { book });
       })
-      .catch((err: any) => {
-        setError("Error posting book to library");
+      .catch(() => {
+        setError("Failed to add book to your library. Please try again.");
       });
   };
 
   const handleSendRequest = () => {
-    console.log(user.username, book.bookId, ownerUsername);
     functions
       .postBookBorrowRequest(user.username, book.bookId, ownerUsername)
-      .then((response: any) => {
+      .then(() => {
         setIsRequested(true);
       })
-      .catch((err: any) => {
-        setError("Error sending borrow request");
+      .catch(() => {
+        setError("Failed to send borrow request. Please try again.");
       });
   };
 
   const handleAddToWishlist = () => {
     functions
       .postWishlist(user.username, book)
-      .then((response: any) => {
+      .then(() => {
         setAddBook(book);
         navigation.navigate("Wish List");
       })
-      .catch((err) => {
-        setError("Error posting book to wishlist");
+      .catch(() => {
+        setError("Failed to add book to your wish list. Please try again.");
       });
   };
 
   return (
     <ScrollView>
       <View style={styles.page}>
+        {error && (
+          <Text accessibilityRole="alert" style={styles.error}>
+            {error}
+          </Text>
+        )}
         <BookBasicDetails book={book} />
         <Text>{book.description}</Text>
 
@@ -164,6 +164,12 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 12,
     borderRadius: 5,
+  },
+
+  error: {
+    color: "red",
+    textAlign: "center",
+    padding: 10,
   },
 });
 

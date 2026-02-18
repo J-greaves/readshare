@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Text, View, TextInput, SafeAreaView } from "react-native";
 import { UserContext } from "../contexts/UserContext";
 import { Button } from "react-native-elements";
-import axios from "axios";
+import functions from "../axiosRequests";
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
@@ -52,21 +52,16 @@ const RegisterNewUser = () => {
         username: inputUsername,
       };
       console.log(newUser);
-      return axios
-        .post(
-          `https://hosting-api-yiyu.onrender.com/api/users/newuser`,
-          newUser
-        )
+      return functions
+        .postNewUser(newUser)
         .then(() => {
           setUser(newUser);
-          console.log("insertValidNewData");
           setInputName("");
           setInputSurname("");
           setInputUsername("");
           setIsRegistered(true);
         })
-        .catch((err) => {
-          console.log("Error: posting new user:", err);
+        .catch(() => {
           setIsRegistered(false);
         });
     }

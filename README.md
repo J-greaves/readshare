@@ -1,70 +1,116 @@
-# 📚 ReadShare - Frontend
+# ReadShare - Frontend
 
-ReadShare is a mobile application designed to help users track the books they lend to friends and manage their own book collections. Built with **React Native**, **TypeScript**, and **Axios**, the app allows users to search for books using the Google Books API or a barcode scanner, add books to personal libraries or wishlists, and manage book lending with friends.
+ReadShare is a mobile application for tracking book lending between friends. Users can search for books by title, author, or barcode, manage personal libraries and wishlists, and handle the full borrowing lifecycle — from request through return.
+
+Built with React Native, TypeScript, and Expo.
 
 ---
 
-## 🚀 Features
+## Features
 
-- Search for books by title, author, or barcode (via Google Books API)
-- Add books to your personal **library** or **wishlist**
+- Search for books by title, author, or barcode scan (Google Books API)
+- Add books to a personal library or wishlist
 - Mark books as available to lend
-- Add friends and view their available books
+- Add friends and browse their lendable books
 - Request to borrow books from friends
-- Track books you are lending out and borrowing from others
+- Accept, reject, and track active borrow requests
+- View books you are currently lending out or borrowing
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
-- **React Native** for the front-end
-- **TypeScript** for type safety
-- **Axios** for API requests
-- **Firebase** for backend database
-- **Render** for hosting the RESTful API
-
----
-
-## 🔗 Backend Repository
-
-The backend for ReadShare is built with JavaScript, utilizing Firebase for the database and Render to host the RESTful API. You can find the backend repo [here](https://github.com/Array-of-Sunshine-Library-App/hosting-api).
+- **React Native / Expo** — cross-platform mobile UI
+- **TypeScript** — strict mode enabled throughout
+- **Axios** — HTTP client for REST API communication
+- **React Navigation** — bottom tab and stack navigation
+- **Render** — hosts the RESTful backend API (Node.js / Firebase)
 
 ---
 
-## 📱 Running the App Locally
+## Backend Repository
 
-Follow these instructions to get the app up and running on your local machine:
+The backend is a Node.js REST API using Firebase for the database, hosted on Render.
 
-### 1. Clone the Repository
+[Array-of-Sunshine-Library-App/hosting-api](https://github.com/Array-of-Sunshine-Library-App/hosting-api)
+
+---
+
+## Architecture
+
+The frontend follows a layered architecture:
+
+- **`axiosRequests.ts`** — single module for all API calls, typed with return types from `types.ts`
+- **`hooks/`** — custom hooks (`useFetchHomeData`, `useFetchLibrary`, `useFetchFriends`, `useFetchFriendRequests`) separate data fetching from component rendering
+- **`contexts/`** — React Context providers for global state (`UserContext`, `BookAddContext`, `HomeUpdateContext`)
+- **`types.ts`** — central type definitions (`Book`, `User`, `Friend`, `PageContext`) shared across the codebase
+- **`utils/`** — pure utility functions (e.g., `formatSearchQuery`)
+
+---
+
+## Environment Variables
+
+The app requires a Google Books API key. Copy `.env.example` to `.env` and fill in your key:
 
 ```bash
-git clone https://github.com/your-username/readshare-frontend.git
-cd readshare-frontend
+cp .env.example .env
 ```
 
-### 2. Install Dependencies
+| Variable | Description |
+|---|---|
+| `GOOGLE_BOOKS_API_KEY` | Google Books API key, used for book search and barcode lookup |
 
-Copy code
+The `.env` file is gitignored. The `@env` module (via `react-native-dotenv`) exposes the variable at build time.
+
+---
+
+## Running the App Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Array-of-Sunshine-Library-App/library-app.git
+cd library-app
+```
+
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Start the App
+### 3. Configure environment variables
 
-To run the app on your device or emulator, you'll need Expo Go. Start the app with:
+```bash
+cp .env.example .env
+# Add your GOOGLE_BOOKS_API_KEY to .env
+```
 
-Copy code
+### 4. Start the app
 
 ```bash
 npx expo start
 ```
 
-Once Expo starts, you'll see a QR code in your terminal or browser. Scan it with the Expo Go app (available on iOS and Android), and the app will launch on your device.
+Scan the QR code with Expo Go (iOS or Android) to run on a physical device, or press `i` / `a` to open in a simulator.
 
-### 🧑‍💻 Development
+---
 
-- Search & API Integration: Use the search bar or barcode scanner to find books via the Google Books API.
-- Manage Collections: Add books to your library or wishlist, and mark books as available to lend.
-- Social Features: Add friends, view their lendable books, and request to borrow.
-- Lending Tracker: Keep track of who has your books and which books you’re borrowing from friends.
+## Running Tests
+
+```bash
+# Run all tests once
+npm test
+
+# Run in watch mode
+npm run test:watch
+
+# Generate a coverage report
+npm run test:coverage
+```
+
+Tests cover:
+
+- **Unit tests** — pure utility functions (`utils/__tests__/`)
+- **Component tests** — rendering assertions (`components/__tests__/`)
+- **Hook tests** — data fetching hooks with mocked API layer (`hooks/__tests__/`)
