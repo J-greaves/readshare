@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { Book, Friend, User } from "./types";
 
-const BASE_URL = "https://hosting-api-yiyu.onrender.com/api";
+const BASE_URL = "https://readshare-api.onrender.com/api";
 
 const getLibrary = (username: string): Promise<AxiosResponse<Book[]>> => {
   return axios.get<Book[]>(`${BASE_URL}/users/${username}/books`);
