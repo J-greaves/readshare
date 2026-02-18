@@ -32,7 +32,7 @@ Built with React Native, TypeScript, and Expo.
 
 The backend is a Node.js REST API using Firebase for the database, hosted on Render.
 
-[Array-of-Sunshine-Library-App/hosting-api](https://github.com/Array-of-Sunshine-Library-App/hosting-api)
+[J-greaves/readshare-api](https://github.com/J-greaves/readshare-api)
 
 ---
 
@@ -69,7 +69,7 @@ The `.env` file is gitignored. The `@env` module (via `react-native-dotenv`) exp
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Array-of-Sunshine-Library-App/library-app.git
+git clone https://github.com/J-greaves/readshare.git
 cd library-app
 ```
 
